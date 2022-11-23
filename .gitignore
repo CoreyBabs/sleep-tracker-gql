@@ -13,3 +13,6 @@
 # Added by cargo
 
 /target
+
+# Ignore local db files
+/*.db*
