@@ -7,11 +7,11 @@ pub async fn initalize_db(pool: &SqlitePool) -> Result<sqlite::SqliteQueryResult
     "CREATE TABLE IF NOT EXISTS sleep
         (
             id         INTEGER  NOT NULL PRIMARY KEY AUTOINCREMENT,
-            night      DATETIME NOT NULL,
-            amount     REAL,
-            quality    INTEGER,
-            created_on DATETIME NOT NULL DEFAULT (datetime('now','localtime')),
-            updated_on DATETIME NOT NULL DEFAULT (datetime('now','localtime'))
+            night      TEXT NOT NULL,
+            amount     REAL NOT NULL,
+            quality    INTEGER NOT NULL,
+            created_on TEXT NOT NULL DEFAULT (datetime('now','localtime')),
+            updated_on TEXT NOT NULL DEFAULT (datetime('now','localtime'))
         );";
 
     let create_tag_table = 
@@ -19,9 +19,9 @@ pub async fn initalize_db(pool: &SqlitePool) -> Result<sqlite::SqliteQueryResult
         (
             id         INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
             name       TEXT NOT NULL,
-            color      TEXT NOT NULL,
-            created_on DATETIME NOT NULL DEFAULT (datetime('now','localtime')),
-            updated_on DATETIME NOT NULL DEFAULT (datetime('now','localtime'))
+            color      INTEGER NOT NULL,
+            created_on TEXT NOT NULL DEFAULT (datetime('now','localtime')),
+            updated_on TEXT NOT NULL DEFAULT (datetime('now','localtime'))
         );";
 
     let create_sleep_tag_table =
