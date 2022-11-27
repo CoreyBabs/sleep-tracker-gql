@@ -2,7 +2,6 @@ use sqlx::{SqlitePool};
 use super::db_types::{DBSleep, DBTag, DBSleepTags};
 
 impl DBSleep {
-    #[tokio::main]
     pub async fn select_all(pool: &SqlitePool) -> Result<Vec<DBSleep>, sqlx::Error>  {
         sqlx::query_as!(DBSleep,
             r#"
@@ -15,7 +14,6 @@ impl DBSleep {
         .await
     }
 
-    #[tokio::main]
     pub async fn select_one(pool: &SqlitePool, id: i64) -> Result<DBSleep, sqlx::Error>  {
         sqlx::query_as!(DBSleep,
             r#"
@@ -30,8 +28,7 @@ impl DBSleep {
         .await
     }
 
-    #[tokio::main]
-    pub async fn insert(pool: &SqlitePool, night: String, amount: f64, quality: i64) -> Result<i64, sqlx::Error>  {
+    pub async fn insert(pool: &SqlitePool, night: &str, amount: f64, quality: i64) -> Result<i64, sqlx::Error>  {
         let mut conn = pool.acquire().await?;
 
         let result = sqlx::query!(
@@ -52,7 +49,6 @@ impl DBSleep {
         }
     }
 
-    #[tokio::main]
     pub async fn update_amount(pool: &SqlitePool, id: i64, amount: f64) -> Result<bool, sqlx::Error> {
         let result = sqlx::query!(
             r#"
@@ -72,7 +68,6 @@ impl DBSleep {
         }
     }
 
-    #[tokio::main]
     pub async fn update_quality(pool: &SqlitePool, id: i64, quality: i64) -> Result<bool, sqlx::Error> {
         let result = sqlx::query!(
             r#"
@@ -92,7 +87,6 @@ impl DBSleep {
         }
     }
 
-    #[tokio::main]
     pub async fn delete(pool: &SqlitePool, id: i64) -> Result<bool, sqlx::Error> {
         let result = sqlx::query!(
             r#"
@@ -113,7 +107,6 @@ impl DBSleep {
 
 impl DBTag {
 
-    #[tokio::main]
     pub async fn select_all(pool: &SqlitePool) -> Result<Vec<DBTag>, sqlx::Error>  {
         sqlx::query_as!(DBTag,
             r#"
@@ -126,7 +119,6 @@ impl DBTag {
         .await
     }
 
-    #[tokio::main]
     pub async fn select_one(pool: &SqlitePool, id: i64) -> Result<DBTag, sqlx::Error>  {
         sqlx::query_as!(DBTag,
             r#"
@@ -141,7 +133,6 @@ impl DBTag {
         .await
     }
 
-    #[tokio::main]
     pub async fn insert(pool: &SqlitePool, name: &str, color: i64) -> Result<i64, sqlx::Error>  {
         let mut conn = pool.acquire().await?;
 
@@ -162,7 +153,6 @@ impl DBTag {
         }
     }
 
-    #[tokio::main]
     pub async fn update_name(pool: &SqlitePool, id: i64, name: &str) -> Result<bool, sqlx::Error> {
         let result = sqlx::query!(
             r#"
@@ -182,7 +172,6 @@ impl DBTag {
         }
     }
 
-    #[tokio::main]
     pub async fn update_color(pool: &SqlitePool, id: i64, color: i64) -> Result<bool, sqlx::Error> {
         let result = sqlx::query!(
             r#"
@@ -202,7 +191,6 @@ impl DBTag {
         }
     }
 
-    #[tokio::main]
     pub async fn delete(pool: &SqlitePool, id: i64) -> Result<bool, sqlx::Error> {
         let result = sqlx::query!(
             r#"
@@ -222,7 +210,6 @@ impl DBTag {
 }
 
 impl DBSleepTags {
-    #[tokio::main]
     pub async fn insert(pool: &SqlitePool, sleep_id: i64, tag_id: i64) -> Result<i64, sqlx::Error>  {
         let mut conn = pool.acquire().await?;
 
@@ -243,7 +230,6 @@ impl DBSleepTags {
         }
     }
 
-    #[tokio::main]
     pub async fn delete(pool: &SqlitePool, sleep_id: i64, tag_id: i64) -> Result<bool, sqlx::Error> {
         let result = sqlx::query!(
             r#"
@@ -262,7 +248,6 @@ impl DBSleepTags {
         }
     }
 
-    #[tokio::main]
     pub async fn select_by_sleep_id(pool: &SqlitePool, sleep_id: i64) -> Result<Vec<DBSleepTags>, sqlx::Error>  {
         sqlx::query_as!(DBSleepTags,
             r#"
@@ -277,7 +262,6 @@ impl DBSleepTags {
         .await
     }
 
-    #[tokio::main]
     pub async fn select_by_tag_id(pool: &SqlitePool, tag_id: i64) -> Result<Vec<DBSleepTags>, sqlx::Error>  {
         sqlx::query_as!(DBSleepTags,
             r#"
