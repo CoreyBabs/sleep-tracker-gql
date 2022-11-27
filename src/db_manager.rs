@@ -8,9 +8,10 @@ pub struct DBManager {
     last_error: String
 }
 
+#[derive(Debug)]
 pub struct Sleep {
-    sleep: DBSleep,
-    tags: Option<Vec<DBTag>>
+    pub sleep: DBSleep,
+    pub tags: Option<Vec<DBTag>>
 }
 
 impl DBManager {
@@ -48,6 +49,10 @@ impl DBManager {
         }
 
         Ok(dbm)
+    }
+
+    pub async fn close_connection(&self) {
+        self.connection_pool.close().await;
     }
 
     pub async fn insert_sleep(&mut self, night: &str, amount: f64, quality: i64) -> i64 {
@@ -199,7 +204,9 @@ impl DBManager {
         let result = DBTag::select_all(&self.connection_pool).await;
 
         match result {
-            Ok(tags) => Some(tags.into_iter().take_while(|t| ids.contains(&t.id)).collect()),
+            Ok(tags) => {
+                Some(tags.into_iter().filter(|t| ids.contains(&t.id)).collect())
+            },
             Err(e) => {
                 self.last_error = e.to_string();
                 None
@@ -254,8 +261,12 @@ impl DBManager {
                 false
             })
     }
+
+    pub fn get_last_error(&self) -> &str {
+        self.last_error.as_str()
+    }
 }
 
 mod db_migrations;
-mod db_types;
 mod db_queries;
+pub mod db_types;

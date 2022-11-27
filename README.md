@@ -6,7 +6,7 @@ This repo is temporary and should not be used independently. I am unsure of what
 
 # TODO
   * Create basic cli for testing
-  * Create logic for analytics (This will be handled cliemt side)
+  * Create logic for analytics (This will be handled client side)
   
 # Requirements
   * Store/Get sleep quality, amount on a day by day basis

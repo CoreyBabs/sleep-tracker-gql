@@ -15,6 +15,7 @@
 //     }
 // }
 
+#[derive(Debug)]
 pub struct DBSleep {
     pub id: i64,
     pub night: String,
@@ -22,12 +23,14 @@ pub struct DBSleep {
     pub quality: i64,
 }
 
+#[derive(Debug)]
 pub struct DBTag {
     pub id: i64,
     pub name: String,
     pub color: i64,
 }
 
+#[derive(Debug)]
 pub struct DBSleepTags {
     pub id: i64,
     pub sleep_id: i64,
