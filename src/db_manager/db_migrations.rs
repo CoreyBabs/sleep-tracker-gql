@@ -40,11 +40,24 @@ pub async fn initalize_db(pool: &SqlitePool) -> Result<sqlite::SqliteQueryResult
                 ON DELETE CASCADE
         );";
 
+        let create_comment_table =
+        "CREATE TABLE IF NOT EXISTS comment 
+            (
+                id         INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+                sleep_id   INTEGER NOT NULL,
+                comment    TEXT NOT NULL,
+                FOREIGN KEY (sleep_id)
+                REFERENCES sleep (id) 
+                    ON UPDATE CASCADE
+                    ON DELETE CASCADE
+            );";
+
     let set_user_version = "PRAGMA user_version = 1;";
               
     query.push_str(create_sleep_table);
     query.push_str(create_tag_table);
     query.push_str(create_sleep_tag_table);
+    query.push_str(create_comment_table);
     query.push_str(set_user_version);
 
     sqlx::query(query.as_str()).execute(pool).await

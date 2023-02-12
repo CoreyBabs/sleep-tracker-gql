@@ -37,6 +37,13 @@ pub struct DBSleepTags {
     pub tag_id: i64,
 }
 
+#[derive(Debug)]
+pub struct DBComment {
+    pub id: i64,
+    pub sleep_id: i64,
+    pub comment: String,
+}
+
 // pub struct Color(pub u8, pub u8, pub u8);
 
 // impl Color {

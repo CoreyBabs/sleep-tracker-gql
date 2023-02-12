@@ -24,8 +24,14 @@ pub async fn test_db_queries(db_path: &str) {
     assert_eq!(dbm.add_tag_to_sleep(2, vec![2]).await, true);
     assert_eq!(dbm.add_tag_to_sleep(1, vec![1,2]).await, true);
 
+    // comment valid inserts
+    assert_eq!(dbm.insert_comment(1, "First comment").await, 1);
+    assert_eq!(dbm.insert_comment(2, "test comment").await, 2);
+    assert_eq!(dbm.insert_comment(1, "2nd comment on night").await, 3);
+
     test_sleep_selects(&mut dbm).await;
     test_tag_selects(&mut dbm).await;
+    test_comment_selects(&mut dbm).await;
     test_updates(&mut dbm).await;
     test_deletes(&mut dbm).await;
 
@@ -65,7 +71,6 @@ async fn test_sleep_selects(dbm: &mut DBManager) {
     assert_eq!(sleep_by_tag_no_tag.len(), 0);
 }
 
-// Note: I dont have a lot of asserts here but visually verify the data instead with println!
 async fn test_tag_selects(dbm: &mut DBManager) {
     let tag_test = dbm.get_tag(2).await.expect("tag test failed");
     let expected_tag = db_types::DBTag {id: 2, name: String::from("screen"), color: 9590460 };
@@ -88,6 +93,16 @@ async fn test_tag_selects(dbm: &mut DBManager) {
     assert_eq!(tags[0].color, expected_tag.color);
 }
 
+async fn test_comment_selects(dbm: &mut DBManager) {
+    let first_night_comments = dbm.get_comments_by_sleep(1).await.expect("selecting comments failed");
+    assert_eq!(first_night_comments.len(), 2);
+    assert_eq!(first_night_comments[0].comment, "First comment");
+
+    let second_night_comments = dbm.get_comments_by_sleep(2).await.expect("selecting comments failed");
+    assert_eq!(second_night_comments.len(), 1);
+    assert_eq!(second_night_comments[0].comment, "test comment");
+}
+
 async fn test_updates(dbm: &mut DBManager) {
     assert_eq!(dbm.get_sleep(1, false).await.unwrap().sleep.amount, 7.5);
     assert_eq!(dbm.update_sleep_amount(1, 7.0).await, true);
@@ -104,6 +119,10 @@ async fn test_updates(dbm: &mut DBManager) {
     assert_eq!(dbm.get_tag(2).await.unwrap().color, 9590460);
     assert_eq!(dbm.update_tag_color(2, 65535).await, true);
     assert_eq!(dbm.get_tag(2).await.unwrap().color, 65535);
+
+    assert_eq!(dbm.get_comments_by_sleep(1).await.unwrap()[1].comment, "2nd comment on night");
+    assert_eq!(dbm.update_comment(3, "updated_comment").await, true);
+    assert_eq!(dbm.get_comments_by_sleep(1).await.unwrap()[1].comment, "updated_comment");
 }
 
 async fn test_deletes(dbm: &mut DBManager) {
@@ -119,4 +138,10 @@ async fn test_deletes(dbm: &mut DBManager) {
     assert_eq!(dbm.get_all_tags().await.unwrap().len(), 2);
     assert_eq!(dbm.delete_tag(1).await, true);
     assert_eq!(dbm.get_all_tags().await.unwrap().len(), 1);
+
+    // test cascade delete from deleting sleep above
+    assert_eq!(dbm.get_comments_by_sleep(1).await.unwrap().len(), 0);
+    assert_eq!(dbm.get_comments_by_sleep(2).await.unwrap().len(), 1);
+    assert_eq!(dbm.delete_comment(2).await, true);
+    assert_eq!(dbm.get_comments_by_sleep(2).await.unwrap().len(), 0);
 }

@@ -262,6 +262,45 @@ impl DBManager {
             })
     }
 
+    pub async fn insert_comment(&mut self, sleep_id: i64, comment: &str) -> i64 {
+        DBComment::insert(&self.connection_pool, sleep_id, comment).await
+            .unwrap_or_else(|e|
+            {
+                self.last_error = e.to_string();
+                -1
+            })
+    }
+
+    pub async fn get_comments_by_sleep(&mut self, sleep_id: i64) -> Option<Vec<DBComment>> {
+        let comments = DBComment::select_by_sleep_id(&self.connection_pool, sleep_id).await;
+
+        match comments {
+            Ok(coms) => {
+                Some(coms)
+            },
+            Err(e) => {
+                self.last_error = e.to_string();
+                None
+            }
+        }
+    }
+
+    pub async fn update_comment(&mut self, sleep_id: i64, comment: &str) -> bool {
+        DBComment::update_comment(&self.connection_pool, sleep_id, comment).await
+            .unwrap_or_else(|e| {
+                self.last_error = e.to_string();
+                false
+            })
+    }
+
+    pub async fn delete_comment(&mut self, id: i64) -> bool {
+        DBComment::delete(&self.connection_pool, id).await
+            .unwrap_or_else(|e| {
+                self.last_error = e.to_string();
+                false
+            })
+    }
+
     pub fn get_last_error(&self) -> &str {
         self.last_error.as_str()
     }
