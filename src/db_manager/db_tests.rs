@@ -21,8 +21,8 @@ pub async fn test_db_queries(db_path: &str) {
     assert_eq!(dbm.insert_tag("screen", 9590460).await, 2);
 
     // sleep_tag valid inserts
-    assert_eq!(dbm.add_tag_to_sleep(2, vec![2]).await, true);
-    assert_eq!(dbm.add_tag_to_sleep(1, vec![1,2]).await, true);
+    assert!(dbm.add_tag_to_sleep(2, vec![2]).await);
+    assert!(dbm.add_tag_to_sleep(1, vec![1,2]).await);
 
     // comment valid inserts
     assert_eq!(dbm.insert_comment(1, "First comment").await, 1);
@@ -105,43 +105,43 @@ async fn test_comment_selects(dbm: &mut DBManager) {
 
 async fn test_updates(dbm: &mut DBManager) {
     assert_eq!(dbm.get_sleep(1, false).await.unwrap().sleep.amount, 7.5);
-    assert_eq!(dbm.update_sleep_amount(1, 7.0).await, true);
+    assert!(dbm.update_sleep_amount(1, 7.0).await);
     assert_eq!(dbm.get_sleep(1, false).await.unwrap().sleep.amount, 7.0);
 
     assert_eq!(dbm.get_sleep(3, false).await.unwrap().sleep.quality, 3);
-    assert_eq!(dbm.update_sleep_quality(3, 1).await, true);
+    assert!(dbm.update_sleep_quality(3, 1).await);
     assert_eq!(dbm.get_sleep(3, false).await.unwrap().sleep.quality, 1);
 
     assert_eq!(dbm.get_tag(1).await.unwrap().name, "test name");
-    assert_eq!(dbm.update_tag_name(1, "update test").await, true);
+    assert!(dbm.update_tag_name(1, "update test").await);
     assert_eq!(dbm.get_tag(1).await.unwrap().name, "update test");
 
     assert_eq!(dbm.get_tag(2).await.unwrap().color, 9590460);
-    assert_eq!(dbm.update_tag_color(2, 65535).await, true);
+    assert!(dbm.update_tag_color(2, 65535).await);
     assert_eq!(dbm.get_tag(2).await.unwrap().color, 65535);
 
     assert_eq!(dbm.get_comments_by_sleep(1).await.unwrap()[1].comment, "2nd comment on night");
-    assert_eq!(dbm.update_comment(3, "updated_comment").await, true);
+    assert!(dbm.update_comment(3, "updated_comment").await);
     assert_eq!(dbm.get_comments_by_sleep(1).await.unwrap()[1].comment, "updated_comment");
 }
 
 async fn test_deletes(dbm: &mut DBManager) {
     // remove tag from sleep first because cascade with auto delete rows in sleep_tag
     assert_eq!(dbm.get_sleep(1, true).await.unwrap().tags.unwrap().len(), 2);
-    assert_eq!(dbm.remove_tag_from_sleep(1, 1).await, true);
+    assert!(dbm.remove_tag_from_sleep(1, 1).await);
     assert_eq!(dbm.get_sleep(1, true).await.unwrap().tags.unwrap().len(), 1);
 
     assert_eq!(dbm.get_all_sleeps().await.unwrap().len(), 3);
-    assert_eq!(dbm.delete_sleep(1).await, true);
+    assert!(dbm.delete_sleep(1).await);
     assert_eq!(dbm.get_all_sleeps().await.unwrap().len(), 2);
 
     assert_eq!(dbm.get_all_tags().await.unwrap().len(), 2);
-    assert_eq!(dbm.delete_tag(1).await, true);
+    assert!(dbm.delete_tag(1).await);
     assert_eq!(dbm.get_all_tags().await.unwrap().len(), 1);
 
     // test cascade delete from deleting sleep above
     assert_eq!(dbm.get_comments_by_sleep(1).await.unwrap().len(), 0);
     assert_eq!(dbm.get_comments_by_sleep(2).await.unwrap().len(), 1);
-    assert_eq!(dbm.delete_comment(2).await, true);
+    assert!(dbm.delete_comment(2).await);
     assert_eq!(dbm.get_comments_by_sleep(2).await.unwrap().len(), 0);
 }
