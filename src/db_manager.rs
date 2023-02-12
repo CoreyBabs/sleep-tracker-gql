@@ -307,6 +307,5 @@ impl DBManager {
 }
 
 mod db_migrations;
-mod db_queries;
 mod db_types;
 pub mod db_tests;
