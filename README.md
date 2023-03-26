@@ -5,6 +5,8 @@ Backend in rust for an app to track sleeping.
 This repo is temporary and should not be used independently. I am unsure of what framework to use for the frontend so I want to have a single source for the backend.
 
 # TODO
+  * Implement GraphQL schema
+  * Documentation
   * Create logic for analytics (Maybe handled client side?)
   * Test UI frameworks (flutter, avalonia)
   
