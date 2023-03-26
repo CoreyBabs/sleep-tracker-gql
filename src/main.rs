@@ -7,7 +7,6 @@ async fn main() {
     let test = true;
     if test {
         db_manager::db_tests::test_db_queries("test.db").await; 
-        
     }
     else {
         let dbm = DBManager::init("sqlite://debug.db").await.unwrap();

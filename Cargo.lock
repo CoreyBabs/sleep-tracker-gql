@@ -747,7 +747,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "sleep-tracker-backend"
+name = "sleep-tracker-server"
 version = "0.1.0"
 dependencies = [
  "sqlx",
