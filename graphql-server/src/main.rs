@@ -6,6 +6,7 @@ use axum::{
     routing::get,
     Router, Server,
 };
+use tokio::signal;
 
 use database_manager::QueryRoot;
 
@@ -26,6 +27,7 @@ async fn main() {
 
     Server::bind(&"127.0.0.1:8000".parse().unwrap())
         .serve(app.into_make_service())
+        .with_graceful_shutdown(shutdown_signal())
         .await
         .unwrap();
 }
@@ -40,3 +42,24 @@ async fn graphql_handler(
 async fn graphiql() -> impl IntoResponse {
     response::Html(GraphiQLSource::build().endpoint("/").finish())
 }
+
+async fn shutdown_signal() {
+    let ctrl_c = async {
+        signal::ctrl_c()
+            .await
+            .expect("failed to install Ctrl+C handler");
+    };
+
+    tokio::select! {
+        _ = ctrl_c => {}
+    }
+
+    // Does the db connection need to be closed here?
+    // This should drop the schema object that owns the db manager,
+    // and therefore the connection pool. I would assume connections
+    // are closed when the connection pool is dropped,
+    // but there are reports of sqlx not closing sqlite connections
+    // when dropped. I'll need to investigate further
+    println!("signal received, starting graceful shutdown");
+}
+
