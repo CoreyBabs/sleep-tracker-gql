@@ -1,33 +1,42 @@
-use axum::{routing::get, Router};
-use std::net::SocketAddr;
+use async_graphql::{http::GraphiQLSource, EmptyMutation, EmptySubscription, Schema};
+use async_graphql_axum::{GraphQLRequest, GraphQLResponse};
+use axum::{
+    extract::Extension,
+    response::{self, IntoResponse},
+    routing::get,
+    Router, Server,
+};
+
+use database_manager::QueryRoot;
 
 #[tokio::main]
 async fn main() {
     let dbm = database_manager::init_db().await;
 
+    let schema = Schema::build(QueryRoot, EmptyMutation, EmptySubscription)
+        .data(dbm)
+        .finish();
 
-    // Route all requests on "/" endpoint to anonymous handler.
-    //
-    // A handler is an async function which returns something that implements
-    // `axum::response::IntoResponse`.
 
-    // A closure or a function can be used as handler.
+        let app = Router::new()
+        .route("/", get(graphiql).post(graphql_handler))
+        .layer(Extension(schema));
 
-    let app = Router::new().route("/", get(handler));
-    //        Router::new().route("/", get(|| async { "Hello, world!" }));
+    println!("GraphiQL IDE: http://localhost:8000");
 
-    // Address that server will bind to.
-    let addr = SocketAddr::from(([127, 0, 0, 1], 3000));
-
-    // Use `hyper::server::Server` which is re-exported through `axum::Server` to serve the app.
-    axum::Server::bind(&addr)
-        // Hyper server takes a make service.
+    Server::bind(&"127.0.0.1:8000".parse().unwrap())
         .serve(app.into_make_service())
         .await
         .unwrap();
 }
 
+async fn graphql_handler(
+    schema: Extension<Schema<QueryRoot, EmptyMutation, EmptySubscription>>,
+    req: GraphQLRequest,
+) -> GraphQLResponse {
+    schema.execute(req.into_inner()).await.into()
+}
 
-async fn handler() -> &'static str {
-    "Hello, world!"
+async fn graphiql() -> impl IntoResponse {
+    response::Html(GraphiQLSource::build().endpoint("/").finish())
 }

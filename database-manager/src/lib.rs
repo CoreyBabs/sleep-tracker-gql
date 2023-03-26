@@ -1,6 +1,9 @@
 use db_manager::DBManager;
-
 pub mod db_manager;
+
+mod model;
+pub use model::QueryRoot;
+
 
 pub async fn init_db() -> DBManager {
     let dbm = DBManager::init("sqlite://debug.db").await.unwrap();
