@@ -1,6 +1,6 @@
 use sqlx::{SqlitePool};
 
-#[derive(Debug)]
+#[derive(Debug, Clone, Default, PartialEq)]
 pub struct DBComment {
     pub id: i64,
     pub sleep_id: i64,

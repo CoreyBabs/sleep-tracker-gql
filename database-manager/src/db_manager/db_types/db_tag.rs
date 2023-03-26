@@ -1,6 +1,6 @@
 use sqlx::{SqlitePool};
 
-#[derive(Debug)]
+#[derive(Debug, Clone, Default, PartialEq)]
 pub struct DBTag {
     pub id: i64,
     pub name: String,
@@ -8,7 +8,6 @@ pub struct DBTag {
 }
 
 impl DBTag {
-
     pub async fn select_all(pool: &SqlitePool) -> Result<Vec<DBTag>, sqlx::Error>  {
         sqlx::query_as!(DBTag,
             r#"

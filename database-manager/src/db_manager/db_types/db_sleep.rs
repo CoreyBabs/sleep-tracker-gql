@@ -1,6 +1,6 @@
 use sqlx::{SqlitePool};
 
-#[derive(Debug)]
+#[derive(Debug, Clone, Default, PartialEq)]
 pub struct DBSleep {
     pub id: i64,
     pub night: String,

@@ -3,12 +3,13 @@ use sqlx::{Sqlite, SqlitePool};
 use sqlx::sqlite::SqlitePoolOptions;
 use db_types::*;
 
+#[derive(Debug, Clone)]
 pub struct DBManager {
     connection_pool: SqlitePool,
     last_error: String
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone, Default, PartialEq)]
 pub struct Sleep {
     pub sleep: DBSleep,
     pub tags: Option<Vec<DBTag>>
