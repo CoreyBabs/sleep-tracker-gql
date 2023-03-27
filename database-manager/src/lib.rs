@@ -10,6 +10,12 @@ pub async fn init_db() -> DBManager {
     dbm
 }
 
+pub async fn _init_test_db() -> DBManager {
+    let dbm = db_manager::db_tests::create_test_db("test.db").await;
+    dbm
+}
+
+
 async fn _test_db() {
     db_manager::db_tests::test_db_queries("test.db").await;
 

@@ -8,8 +8,34 @@ pub async fn test_db_queries(db_path: &str) {
         println!("Deleting test db and starting fresh");
         fs::remove_file(db_path).unwrap();
     }
-    let mut dbm = DBManager::init("sqlite://test.db").await.unwrap();
+    let mut dbm = create_test_db(db_path).await;
 
+    // inserts are done in create_test_db
+    test_sleep_selects(&mut dbm).await;
+    test_tag_selects(&mut dbm).await;
+    test_comment_selects(&mut dbm).await;
+    test_updates(&mut dbm).await;
+    test_deletes(&mut dbm).await;
+
+    dbm.close_connection().await;
+
+    println!("Tests complete!");
+}
+
+pub async fn create_test_db(db_path: &str) -> DBManager {
+    // Init to new db
+    let exists = std::path::Path::new(db_path).exists();
+    if exists {
+        println!("Deleting test db and starting fresh");
+        fs::remove_file(db_path).unwrap();
+    }
+    //"sqlite://test.db"
+    let mut dbm = DBManager::init(db_path).await.unwrap();
+    test_inserts(&mut dbm).await;
+    dbm
+}
+
+async fn test_inserts(dbm: &mut DBManager) {
     // test insert queries while setting up db
     // Sleep valid inserts
     assert_eq!(dbm.insert_sleep("2022-11-25", 7.5, 1).await, 1);
@@ -28,16 +54,6 @@ pub async fn test_db_queries(db_path: &str) {
     assert_eq!(dbm.insert_comment(1, "First comment").await, 1);
     assert_eq!(dbm.insert_comment(2, "test comment").await, 2);
     assert_eq!(dbm.insert_comment(1, "2nd comment on night").await, 3);
-
-    test_sleep_selects(&mut dbm).await;
-    test_tag_selects(&mut dbm).await;
-    test_comment_selects(&mut dbm).await;
-    test_updates(&mut dbm).await;
-    test_deletes(&mut dbm).await;
-
-    dbm.close_connection().await;
-
-    println!("Tests complete!");
 }
 
 async fn test_sleep_selects(dbm: &mut DBManager) {
