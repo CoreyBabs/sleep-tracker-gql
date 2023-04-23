@@ -5,7 +5,7 @@ use crate::DBManager;
 #[derive(Debug, Clone, Default, PartialEq)]
 pub struct Sleep {
     pub id: i64,
-    pub night: String,
+    pub night: Night,
     pub amount: f64,
     pub quality: i64,
     pub tags: Option<Vec<Tag>>,
@@ -24,7 +24,7 @@ impl Sleep {
 
         Sleep {
             id: db_sleep.sleep.id,
-            night: db_sleep.sleep.night.clone(),
+            night: Night::from_string(db_sleep.sleep.night.clone()),
             amount: db_sleep.sleep.amount,
             quality: db_sleep.sleep.quality,
             tags: tags,
@@ -39,8 +39,8 @@ impl Sleep {
         self.id
     }
 
-    async fn night(&self) -> &str {
-        self.night.as_str()
+    async fn night(&self) -> Night {
+        self.night.clone()
     }
 
     async fn amount(&self) -> f64 {
@@ -90,4 +90,32 @@ pub struct Comment {
     pub id: i64,
     pub sleep_id: i64,
     pub comment: String,
+}
+
+#[derive(Debug, Clone, Default, PartialEq, SimpleObject)]
+pub struct Night {
+    pub day: u8,
+    pub month: u8,
+    pub year: u16,
+    pub date: String,
+}
+
+impl Night {
+    fn from_string(night: impl Into<String>) -> Night {
+        let date = night.into();
+        let night: Vec<&str> = date.split("-").collect();
+        
+        // TODO: Unwrapping here is not safe, so this should be handled better
+        Night {
+            day: night[2].parse::<u8>().unwrap(),
+            month: night[1].parse::<u8>().unwrap(),
+            year: night[0].parse::<u16>().unwrap(),
+            date
+        }
+    }
+
+    fn _to_string(self) -> String {
+        let strings = vec![self.year.to_string(), self.month.to_string(), self.day.to_string()];
+        strings.join("-")
+    }
 }
