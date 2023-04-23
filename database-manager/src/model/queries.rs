@@ -14,7 +14,7 @@ impl QueryRoot {
         let sleeps = dbm.get_all_sleeps().await;
         match sleeps {
             Some(v) => {
-                Some(v.iter().map(|s| Sleep::from_db(s)).collect::<Vec<Sleep>>())
+                Some(v.iter().map(Sleep::from_db).collect::<Vec<Sleep>>())
             },
             None => None
         }
@@ -52,7 +52,7 @@ impl QueryRoot {
         let tags = dbm.get_all_tags().await;
         match tags {
             Some(v) => {
-                Some(v.iter().map(|t|Tag { id: t.id, name: t.name.clone(), color: t.color})
+                Some(v.iter().map(|t| Tag { id: t.id, name: t.name.clone(), color: t.color})
                     .collect::<Vec<Tag>>())
             },
             None => None

@@ -16,9 +16,9 @@ pub struct DbmSleep {
 
 impl DBManager {
     pub async fn init(db_path: &str) -> Result<DBManager, sqlx::Error>{
-        let db_doesnt_exist = !Sqlite::database_exists(&db_path).await.unwrap_or(false);
+        let db_doesnt_exist = !Sqlite::database_exists(db_path).await.unwrap_or(false);
         if db_doesnt_exist {
-            let db_create_result = Sqlite::create_database(&db_path).await;
+            let db_create_result = Sqlite::create_database(db_path).await;
             match db_create_result {
                 Ok(_) => println!("DB Created!"),
                 Err(e) => {
@@ -62,22 +62,22 @@ impl DBManager {
     pub async fn get_sleep(&self, id: i64, include_tags: bool) -> Option<DbmSleep>  {
         let result = DBSleep::select_one(&self.connection_pool, id).await;
         
-        let db_sleep: DBSleep;  
+        let db_sleep = 
         match result {
-            Ok(s) => db_sleep = s,
+            Ok(s) => s,
             Err(_) => return None
-        }
+        };
 
         let mut sleep = DbmSleep { sleep: db_sleep, tags: None };
 
         if include_tags {
             let sleep_tags = DBSleepTags::select_by_sleep_id(&self.connection_pool, id).await;
 
-            let tag_ids: Vec<i64>;
+            let tag_ids =
             match sleep_tags {
-                Ok(st) => tag_ids = st.iter().map(|x| x.tag_id).collect(),
+                Ok(st) => st.iter().map(|x| x.tag_id).collect(),
                 Err(_) => return None
-            }
+            };
 
             let tags = self.get_multiple_tags(tag_ids).await;
             sleep.tags = tags;
@@ -91,7 +91,7 @@ impl DBManager {
         
         match result {
             Ok(s) => Some(s.into_iter().map(|x| DbmSleep { sleep: x, tags: None }).collect()),
-            Err(_) => return None
+            Err(_) => None
         }
     }
 
@@ -112,42 +112,33 @@ impl DBManager {
     pub async fn get_sleeps_by_tag(&self, tag_id: i64) ->  Option<Vec<DbmSleep>> {
         let sleep_tags = DBSleepTags::select_by_tag_id(&self.connection_pool, tag_id).await;
 
-        let sleep_ids: Vec<i64>;
+        let sleep_ids =
         match sleep_tags {
-            Ok(st) => sleep_ids = st.iter().map(|x| x.sleep_id).collect(),
+            Ok(st) => st.iter().map(|x| x.sleep_id).collect(),
             Err(_) => return None
-        }
+        };
 
         self.get_mulitple_sleeps(sleep_ids).await
     }
 
     pub async fn update_sleep_amount(&self, id: i64, amount: f64) -> bool {
         DBSleep::update_amount(&self.connection_pool, id, amount).await
-            .unwrap_or_else(|_| {
-                false
-            })
+            .unwrap_or(false)
     }
 
     pub async fn update_sleep_quality(&self, id: i64, quality: i64) -> bool {
         DBSleep::update_quality(&self.connection_pool, id, quality).await
-            .unwrap_or_else(|_| {
-                false
-            })
+            .unwrap_or(false)
     }
 
     pub async fn delete_sleep(&self, id: i64) -> bool {
         DBSleep::delete(&self.connection_pool, id).await
-            .unwrap_or_else(|_| {
-                false
-            })
+            .unwrap_or(false)
     }
 
     pub async fn insert_tag(&self, name: &str, color: i64) -> i64 {
         DBTag::insert(&self.connection_pool, name, color).await
-            .unwrap_or_else(|_|
-            {
-                -1
-            })
+            .unwrap_or(-1)
     }
 
     pub async fn get_tag(&self, id: i64) -> Option<DBTag> {
@@ -175,11 +166,11 @@ impl DBManager {
     pub async fn get_tags_by_sleep(&self, sleep_id: i64) ->  Option<Vec<DBTag>> {
         let sleep_tags = DBSleepTags::select_by_sleep_id(&self.connection_pool, sleep_id).await;
 
-        let tag_ids: Vec<i64>;
+        let tag_ids =
         match sleep_tags {
-            Ok(st) => tag_ids = st.iter().map(|x| x.tag_id).collect(),
+            Ok(st) => st.iter().map(|x| x.tag_id).collect(),
             Err(_) => return None
-        }
+        };
 
        self.get_multiple_tags(tag_ids).await
     }
@@ -201,23 +192,17 @@ impl DBManager {
 
     pub async fn update_tag_name(&self, id: i64, name: &str) -> bool {
         DBTag::update_name(&self.connection_pool, id, name).await
-            .unwrap_or_else(|_| {
-                false
-            })
+            .unwrap_or(false)
     }
 
     pub async fn update_tag_color(&self, id: i64, color: i64) -> bool {
         DBTag::update_color(&self.connection_pool, id, color).await
-            .unwrap_or_else(|_| {
-                false
-            })
+            .unwrap_or(false)
     }
 
     pub async fn delete_tag(&self, id: i64) -> bool {
         DBTag::delete(&self.connection_pool, id).await
-            .unwrap_or_else(|_| {
-                false
-            })
+            .unwrap_or(false)
     }
 
     pub async fn add_tag_to_sleep(&self, sleep_id: i64, tag_ids: Vec<i64>) -> bool {
@@ -237,17 +222,12 @@ impl DBManager {
 
     pub async fn remove_tag_from_sleep(&self, sleep_id: i64, tag_id: i64) -> bool {
         DBSleepTags::delete(&self.connection_pool, sleep_id, tag_id).await
-            .unwrap_or_else(|_| {
-                false
-            })
+            .unwrap_or(false)
     }
 
     pub async fn insert_comment(&self, sleep_id: i64, comment: &str) -> i64 {
         DBComment::insert(&self.connection_pool, sleep_id, comment).await
-            .unwrap_or_else(|_|
-            {
-                -1
-            })
+            .unwrap_or(-1)
     }
 
     pub async fn get_comments_by_sleep(&self, sleep_id: i64) -> Option<Vec<DBComment>> {
@@ -265,16 +245,12 @@ impl DBManager {
 
     pub async fn update_comment(&self, sleep_id: i64, comment: &str) -> bool {
         DBComment::update_comment(&self.connection_pool, sleep_id, comment).await
-            .unwrap_or_else(|_e| {
-                false
-            })
+            .unwrap_or(false)
     }
 
     pub async fn delete_comment(&self, id: i64) -> bool {
         DBComment::delete(&self.connection_pool, id).await
-            .unwrap_or_else(|_e| {
-                false
-            })
+            .unwrap_or(false)
     }
 }
 

@@ -27,7 +27,7 @@ impl Sleep {
             night: Night::from_string(db_sleep.sleep.night.clone()),
             amount: db_sleep.sleep.amount,
             quality: db_sleep.sleep.quality,
-            tags: tags,
+            tags,
             comments: None
         }
     }  
@@ -103,7 +103,7 @@ pub struct Night {
 impl Night {
     fn from_string(night: impl Into<String>) -> Night {
         let date = night.into();
-        let night: Vec<&str> = date.split("-").collect();
+        let night: Vec<&str> = date.split('-').collect();
         
         // TODO: Unwrapping here is not safe, so this should be handled better
         Night {
