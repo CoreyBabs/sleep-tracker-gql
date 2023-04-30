@@ -1,4 +1,4 @@
-use async_graphql::{http::GraphiQLSource, EmptyMutation, EmptySubscription, Schema};
+use async_graphql::{http::GraphiQLSource, EmptySubscription, Schema};
 use async_graphql_axum::{GraphQLRequest, GraphQLResponse};
 use axum::{
     extract::Extension,
@@ -8,14 +8,14 @@ use axum::{
 };
 use tokio::signal;
 
-use database_manager::QueryRoot;
+use database_manager::{QueryRoot, MutationRoot};
 
 #[tokio::main]
 async fn main() {
    // let dbm = database_manager::init_db().await;
    let dbm = database_manager::_init_test_db().await;
 
-    let schema = Schema::build(QueryRoot, EmptyMutation, EmptySubscription)
+    let schema = Schema::build(QueryRoot, MutationRoot, EmptySubscription)
         .data(dbm)
         .finish();
 
@@ -34,7 +34,7 @@ async fn main() {
 }
 
 async fn graphql_handler(
-    schema: Extension<Schema<QueryRoot, EmptyMutation, EmptySubscription>>,
+    schema: Extension<Schema<QueryRoot, MutationRoot, EmptySubscription>>,
     req: GraphQLRequest,
 ) -> GraphQLResponse {
     schema.execute(req.into_inner()).await.into()

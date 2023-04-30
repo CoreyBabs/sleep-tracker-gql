@@ -1,4 +1,4 @@
-use async_graphql::{Context, Object, SimpleObject};
+use async_graphql::{Context, Object, SimpleObject, InputObject};
 use crate::db_manager::DbmSleep;
 use crate::DBManager;
 
@@ -101,7 +101,7 @@ pub struct Night {
 }
 
 impl Night {
-    fn from_string(night: impl Into<String>) -> Night {
+    pub fn from_string(night: impl Into<String>) -> Night {
         let date = night.into();
         let night: Vec<&str> = date.split('-').collect();
         
@@ -113,9 +113,19 @@ impl Night {
             date
         }
     }
+}
 
-    fn _to_string(self) -> String {
-        let strings = vec![self.year.to_string(), self.month.to_string(), self.day.to_string()];
-        strings.join("-")
-    }
+#[derive(Debug, Clone, Default, PartialEq, InputObject)]
+pub struct SleepInput {
+    pub night: String,
+    pub amount: f64,
+    pub quality: i64,
+    pub tags: Option<Vec<i64>>,
+    pub comments: Option<Vec<String>>
+}
+
+#[derive(Debug, Clone, Default, PartialEq, InputObject)]
+pub struct TagInput {
+    pub name: String,
+    pub color: i64,
 }

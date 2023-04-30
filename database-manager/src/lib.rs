@@ -2,7 +2,7 @@ use db_manager::DBManager;
 pub mod db_manager;
 
 mod model;
-pub use model::QueryRoot;
+pub use model::{QueryRoot, MutationRoot};
 
 
 pub async fn init_db() -> DBManager {
