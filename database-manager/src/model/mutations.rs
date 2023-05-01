@@ -6,7 +6,6 @@ use async_graphql::{Context, Object};
 pub struct MutationRoot;
 
 // TODO: Mutations: Update sleep (should this be seperate or same as adding tag/comment to sleep?), tag, comment
-// abstract returning of sleep
 
 #[Object]
 impl MutationRoot {
@@ -28,11 +27,7 @@ impl MutationRoot {
                 }
             }
 
-            let sleep = dbm.get_sleep(sleep_id, false).await;
-            match sleep {
-                Some(s) => Some(Sleep::from_db(&s)),
-                None => None,
-            } 
+            Sleep::from_sleep_id(dbm, sleep_id).await 
         }
 
         async fn add_tag(
@@ -59,11 +54,7 @@ impl MutationRoot {
                 let dbm = ctx.data_unchecked::<DBManager>();
                 dbm.add_tags_to_sleep(sleep_id, tag_ids).await;
 
-                let sleep = dbm.get_sleep(sleep_id, false).await;
-                match sleep {
-                    Some(s) => Some(Sleep::from_db(&s)),
-                    None => None,
-                }
+                Sleep::from_sleep_id(dbm, sleep_id).await 
             }
         
         async fn add_comment_to_sleep(
@@ -75,11 +66,7 @@ impl MutationRoot {
                 let dbm = ctx.data_unchecked::<DBManager>();
                 dbm.insert_comment(sleep_id, comment.as_str()).await;
 
-                let sleep = dbm.get_sleep(sleep_id, false).await;
-                match sleep {
-                    Some(s) => Some(Sleep::from_db(&s)),
-                    None => None,
-                }
+                Sleep::from_sleep_id(dbm, sleep_id).await 
             }
 
         async fn delete_sleep( &self,

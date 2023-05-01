@@ -30,6 +30,14 @@ impl Sleep {
             tags,
             comments: None
         }
+    }
+
+    pub async fn from_sleep_id(dbm: &DBManager, sleep_id: i64) -> Option<Sleep> {
+        let sleep = dbm.get_sleep(sleep_id, false).await;
+        match sleep {
+            Some(s) => Some(Sleep::from_db(&s)),
+            None => None,
+        } 
     }  
 }
 

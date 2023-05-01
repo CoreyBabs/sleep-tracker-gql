@@ -26,11 +26,7 @@ impl QueryRoot {
         #[graphql(desc = "id of the sleep")] id: i64) 
         -> Option<Sleep> {
         let dbm = ctx.data_unchecked::<DBManager>();
-        let sleep = dbm.get_sleep(id, false).await;
-        match sleep {
-            Some(s) => Some(Sleep::from_db(&s)),
-            None => None,
-        }
+        Sleep::from_sleep_id(dbm, id).await
     }
 
     /// Get the tag with the given id
