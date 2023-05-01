@@ -47,8 +47,8 @@ async fn test_inserts(dbm: &mut DBManager) {
     assert_eq!(dbm.insert_tag("screen", 9590460).await, 2);
 
     // sleep_tag valid inserts
-    assert!(dbm.add_tag_to_sleep(2, vec![2]).await);
-    assert!(dbm.add_tag_to_sleep(1, vec![1,2]).await);
+    assert!(dbm.add_tags_to_sleep(2, vec![2]).await);
+    assert!(dbm.add_tags_to_sleep(1, vec![1,2]).await);
 
     // comment valid inserts
     assert_eq!(dbm.insert_comment(1, "First comment").await, 1);

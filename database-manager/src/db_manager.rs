@@ -205,7 +205,7 @@ impl DBManager {
             .unwrap_or(false)
     }
 
-    pub async fn add_tag_to_sleep(&self, sleep_id: i64, tag_ids: Vec<i64>) -> bool {
+    pub async fn add_tags_to_sleep(&self, sleep_id: i64, tag_ids: Vec<i64>) -> bool {
         let mut result = true;
         for tag_id in tag_ids {
             match DBSleepTags::insert(&self.connection_pool, sleep_id, tag_id).await {
