@@ -6,7 +6,6 @@ use async_graphql::{Context, Object};
 pub struct MutationRoot;
 
 // TODO: Mutations: Update sleep (should this be seperate or same as adding tag/comment to sleep?), tag, comment
-// Delete sleep, tag, comment
 // abstract returning of sleep
 
 #[Object]
@@ -82,4 +81,28 @@ impl MutationRoot {
                     None => None,
                 }
             }
+
+        async fn delete_sleep( &self,
+            ctx: &Context<'_>,
+            #[graphql(desc = "Sleep id to delete.")] sleep_id: i64)
+            -> bool {
+                let dbm = ctx.data_unchecked::<DBManager>();
+                dbm.delete_sleep(sleep_id).await
+        }
+
+        async fn delete_tag( &self,
+            ctx: &Context<'_>,
+            #[graphql(desc = "tag id to delete.")] tag_id: i64)
+            -> bool {
+                let dbm = ctx.data_unchecked::<DBManager>();
+                dbm.delete_tag(tag_id).await
+        }
+
+        async fn delete_comment( &self,
+            ctx: &Context<'_>,
+            #[graphql(desc = "comment id to delete.")] comment_id: i64)
+            -> bool {
+                let dbm = ctx.data_unchecked::<DBManager>();
+                dbm.delete_comment(comment_id).await
+        }
 }
