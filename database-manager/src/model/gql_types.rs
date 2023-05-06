@@ -159,6 +159,18 @@ pub struct TagInput {
 }
 
 #[derive(Debug, Clone, Default, PartialEq, InputObject)]
+pub struct AddTagsToSleepInput {
+    pub sleep_id: i64,
+    pub tag_ids: Vec<i64>
+}
+
+#[derive(Debug, Clone, Default, PartialEq, InputObject)]
+pub struct AddCommentToSleepInput {
+    pub sleep_id: i64,
+    pub comment: String
+}
+
+#[derive(Debug, Clone, Default, PartialEq, InputObject)]
 pub struct UpdateSleepInput {
     pub sleep_id: i64,
     pub amount: Option<f64>,

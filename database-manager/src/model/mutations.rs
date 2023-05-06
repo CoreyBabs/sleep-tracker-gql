@@ -5,23 +5,23 @@ use async_graphql::{Context, Object};
 
 pub struct MutationRoot;
 
-// TODO: Handle invalid entries better, consolidate input types
+// TODO: Handle invalid entries better? (What should be returned if an id that is not in the db is given as an argument?),
 
 #[Object]
 impl MutationRoot {
     async fn add_sleep(
         &self,
         ctx: &Context<'_>,
-        #[graphql(desc = "Sleep input containing a night's data")] input: SleepInput)
+        #[graphql(desc = "Sleep input containing a night's data")] sleep_input: SleepInput)
         -> Option<Sleep> {
             let dbm = ctx.data_unchecked::<DBManager>();
-            let sleep_id = dbm.insert_sleep(input.night.as_str(), input.amount, input.quality).await;
+            let sleep_id = dbm.insert_sleep(sleep_input.night.as_str(), sleep_input.amount, sleep_input.quality).await;
 
-            if let Some(tags) = input.tags {
+            if let Some(tags) = sleep_input.tags {
                 dbm.add_tags_to_sleep(sleep_id, tags).await;
             }
 
-            if let Some(comments) = input.comments {
+            if let Some(comments) = sleep_input.comments {
                 for comment in comments {
                     dbm.insert_comment(sleep_id, comment.as_str()).await;
                 }
@@ -33,10 +33,10 @@ impl MutationRoot {
         async fn add_tag(
             &self,
             ctx: &Context<'_>,
-            #[graphql(desc = "Tag input containing a tag's data")] input: TagInput)
+            #[graphql(desc = "Tag input containing a tag's data")] tag_input: TagInput)
             -> Option<Tag> {
                 let dbm = ctx.data_unchecked::<DBManager>();
-                let tag_id = dbm.insert_tag(input.name.as_str(), input.color).await;
+                let tag_id = dbm.insert_tag(tag_input.name.as_str(), tag_input.color).await;
     
                 Tag::from_tag_id(dbm, tag_id).await 
             }
@@ -44,10 +44,11 @@ impl MutationRoot {
         async fn add_tags_to_sleep(
             &self,
             ctx: &Context<'_>,
-            #[graphql(desc = "Sleep id to add tag to.")] sleep_id: i64,
-            #[graphql(desc = "Tag ids to add to sleep")] tag_ids: Vec<i64>)
+            #[graphql(desc = "Contains Sleep id and tags to add to sleep.")] add_tags_to_sleep_input: AddTagsToSleepInput)
             -> Option<Sleep> {
                 let dbm = ctx.data_unchecked::<DBManager>();
+                let sleep_id = add_tags_to_sleep_input.sleep_id;
+                let tag_ids = add_tags_to_sleep_input.tag_ids;
                 dbm.add_tags_to_sleep(sleep_id, tag_ids).await;
 
                 Sleep::from_sleep_id(dbm, sleep_id).await 
@@ -56,10 +57,11 @@ impl MutationRoot {
         async fn add_comment_to_sleep(
             &self,
             ctx: &Context<'_>,
-            #[graphql(desc = "Sleep id to add tag to.")] sleep_id: i64,
-            #[graphql(desc = "Comment to add to sleep")] comment: String)
+            #[graphql(desc = "Contains Sleep id and comment to add to sleep")] add_comment_to_sleep_input: AddCommentToSleepInput)
             -> Option<Sleep> {
                 let dbm = ctx.data_unchecked::<DBManager>();
+                let sleep_id = add_comment_to_sleep_input.sleep_id;
+                let comment = add_comment_to_sleep_input.comment;
                 dbm.insert_comment(sleep_id, comment.as_str()).await;
 
                 Sleep::from_sleep_id(dbm, sleep_id).await 
@@ -178,5 +180,4 @@ impl MutationRoot {
 
                 Sleep::from_sleep_id(dbm, sleep_id).await
             }
-        
 }
