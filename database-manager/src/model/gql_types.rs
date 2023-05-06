@@ -177,3 +177,9 @@ pub struct UpdateCommentInput {
     pub comment_id: i64,
     pub comment: String
 }
+
+#[derive(Debug, Clone, Default, PartialEq, InputObject)]
+pub struct RemoveTagFromSleepInput {
+    pub sleep_id: i64,
+    pub tag_id: i64
+}

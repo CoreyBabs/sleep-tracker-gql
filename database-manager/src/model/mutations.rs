@@ -5,8 +5,7 @@ use async_graphql::{Context, Object};
 
 pub struct MutationRoot;
 
-// TODO: Mutations:
-// Remove tag from sleep
+// TODO: Handle invalid entries better, consolidate input types
 
 #[Object]
 impl MutationRoot {
@@ -165,4 +164,19 @@ impl MutationRoot {
                     None 
                 }
             }
+
+        async fn remove_tag_from_sleep(
+            &self,
+            ctx: &Context<'_>,
+            #[graphql(desc = "Provides Sleep to remove given tag from.")] remove_tag_input: RemoveTagFromSleepInput)
+            -> Option<Sleep> {
+                let dbm = ctx.data_unchecked::<DBManager>();
+                let sleep_id = remove_tag_input.sleep_id;
+                let tag_id = remove_tag_input.tag_id;
+
+                dbm.remove_tag_from_sleep(sleep_id, tag_id).await;
+
+                Sleep::from_sleep_id(dbm, sleep_id).await
+            }
+        
 }
