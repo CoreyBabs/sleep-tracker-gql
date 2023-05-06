@@ -230,6 +230,16 @@ impl DBManager {
             .unwrap_or(-1)
     }
 
+    pub async fn get_comment(&self, comment_id: i64) -> Option<DBComment> {
+        let result = DBComment::select_by_id(&self.connection_pool, comment_id).await;
+        match result {
+            Ok(c) => Some(c),
+            Err(_) => {
+                None
+            }
+        }
+    }
+
     pub async fn get_comments_by_sleep(&self, sleep_id: i64) -> Option<Vec<DBComment>> {
         let comments = DBComment::select_by_sleep_id(&self.connection_pool, sleep_id).await;
 
@@ -243,8 +253,8 @@ impl DBManager {
         }
     }
 
-    pub async fn update_comment(&self, sleep_id: i64, comment: &str) -> bool {
-        DBComment::update_comment(&self.connection_pool, sleep_id, comment).await
+    pub async fn update_comment(&self, comment_id: i64, comment: &str) -> bool {
+        DBComment::update_comment(&self.connection_pool, comment_id, comment).await
             .unwrap_or(false)
     }
 

@@ -93,11 +93,31 @@ pub struct Tag {
     pub color: i64,
 }
 
+impl Tag {
+    pub async fn from_tag_id(dbm: &DBManager, tag_id: i64) -> Option<Tag> {
+        let tag = dbm.get_tag(tag_id).await;
+        match tag {
+            Some(t) => Some(Tag { id: t.id, name: t.name.clone(), color: t.color }),
+            None => None,
+        } 
+    }
+}
+
 #[derive(Debug, Clone, Default, PartialEq, SimpleObject)]
 pub struct Comment {
     pub id: i64,
     pub sleep_id: i64,
     pub comment: String,
+}
+
+impl Comment {
+    pub async fn from_comment_id(dbm: &DBManager, comment_id: i64) -> Option<Comment> {
+        let comment = dbm.get_comment(comment_id).await;
+        match comment {
+            Some(c) => Some(Comment {id: c.id, sleep_id: c.sleep_id, comment: c.comment.clone()}),
+            None => None
+        }
+    }
 }
 
 #[derive(Debug, Clone, Default, PartialEq, SimpleObject)]
@@ -136,4 +156,24 @@ pub struct SleepInput {
 pub struct TagInput {
     pub name: String,
     pub color: i64,
+}
+
+#[derive(Debug, Clone, Default, PartialEq, InputObject)]
+pub struct UpdateSleepInput {
+    pub sleep_id: i64,
+    pub amount: Option<f64>,
+    pub quality: Option<i64>,
+}
+
+#[derive(Debug, Clone, Default, PartialEq, InputObject)]
+pub struct UpdateTagInput {
+    pub tag_id: i64,
+    pub name: Option<String>,
+    pub color: Option<i64>,
+}
+
+#[derive(Debug, Clone, Default, PartialEq, InputObject)]
+pub struct UpdateCommentInput {
+    pub comment_id: i64,
+    pub comment: String
 }
