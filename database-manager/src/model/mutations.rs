@@ -5,8 +5,6 @@ use async_graphql::{Context, Object};
 
 pub struct MutationRoot;
 
-// TODO: Handle invalid entries better? (What should be returned if an id that is not in the db is given as an argument?),
-
 #[Object]
 impl MutationRoot {
     async fn add_sleep(
@@ -176,8 +174,13 @@ impl MutationRoot {
                 let sleep_id = remove_tag_input.sleep_id;
                 let tag_id = remove_tag_input.tag_id;
 
-                dbm.remove_tag_from_sleep(sleep_id, tag_id).await;
+                let tag_removed = dbm.remove_tag_from_sleep(sleep_id, tag_id).await;
 
-                Sleep::from_sleep_id(dbm, sleep_id).await
+                if tag_removed {
+                    Sleep::from_sleep_id(dbm, sleep_id).await
+                }
+                else {
+                    None
+                }
             }
 }
