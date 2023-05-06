@@ -34,10 +34,7 @@ impl Sleep {
 
     pub async fn from_sleep_id(dbm: &DBManager, sleep_id: i64) -> Option<Sleep> {
         let sleep = dbm.get_sleep(sleep_id, false).await;
-        match sleep {
-            Some(s) => Some(Sleep::from_db(&s)),
-            None => None,
-        } 
+        sleep.map(|s| Sleep::from_db(&s)) 
     }  
 }
 
@@ -114,7 +111,7 @@ impl Comment {
     pub async fn from_comment_id(dbm: &DBManager, comment_id: i64) -> Option<Comment> {
         let comment = dbm.get_comment(comment_id).await;
         match comment {
-            Some(c) => Some(Comment {id: c.id, sleep_id: c.sleep_id, comment: c.comment.clone()}),
+            Some(c) => Some(Comment {id: c.id, sleep_id: c.sleep_id, comment: c.comment}),
             None => None
         }
     }

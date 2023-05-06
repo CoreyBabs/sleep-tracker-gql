@@ -12,12 +12,7 @@ impl QueryRoot {
     async fn all_sleeps<'a>(&self, ctx: &Context<'a>) -> Option<Vec<Sleep>> {
         let dbm = ctx.data_unchecked::<DBManager>();
         let sleeps = dbm.get_all_sleeps().await;
-        match sleeps {
-            Some(v) => {
-                Some(v.iter().map(Sleep::from_db).collect::<Vec<Sleep>>())
-            },
-            None => None
-        }
+        sleeps.map(|v| v.iter().map(Sleep::from_db).collect::<Vec<Sleep>>())
     }
 
     /// Get the sleep with the given id
@@ -46,12 +41,7 @@ impl QueryRoot {
     async fn all_tags<'a>(&self, ctx: &Context<'a>) -> Option<Vec<Tag>> {
         let dbm = ctx.data_unchecked::<DBManager>();
         let tags = dbm.get_all_tags().await;
-        match tags {
-            Some(v) => {
-                Some(v.iter().map(|t| Tag { id: t.id, name: t.name.clone(), color: t.color})
-                    .collect::<Vec<Tag>>())
-            },
-            None => None
-        }
+        tags.map(|v| v.iter().map(|t| Tag { id: t.id, name: t.name.clone(), color: t.color})
+            .collect::<Vec<Tag>>())
     }
 }
