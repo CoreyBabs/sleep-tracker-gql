@@ -35,6 +35,25 @@ impl DBSleep {
         .await
     }
 
+    pub async fn select_by_month(pool: &SqlitePool, month: u8, year: u16) -> Result<Vec<DBSleep>, sqlx::Error>  {
+        let month = month.to_string();
+        let year = year.to_string();
+        let mut date = [year, month].join("-");
+        date.push('%');
+
+        sqlx::query_as!(DBSleep,
+            r#"
+            SELECT id, night, amount, quality
+            FROM sleep
+            WHERE night LIKE ?1
+            ORDER BY id
+                "#,
+                date
+        )
+        .fetch_all(pool)
+        .await
+    }
+
     pub async fn insert(pool: &SqlitePool, night: &str, amount: f64, quality: i64) -> Result<i64, sqlx::Error>  {
         let mut conn = pool.acquire().await?;
 

@@ -35,7 +35,18 @@ impl Sleep {
     pub async fn from_sleep_id(dbm: &DBManager, sleep_id: i64) -> Option<Sleep> {
         let sleep = dbm.get_sleep(sleep_id, false).await;
         sleep.map(|s| Sleep::from_db(&s)) 
-    }  
+    }
+
+    pub fn filter_sleeps_by_date(
+        sleeps: Option<Vec<Sleep>>,
+        start_date: &SleepsInRangeInput,
+        end_date: &SleepsInRangeInput)
+        -> Option<Vec<Sleep>> {
+            let sleeps = sleeps.map(|v| v.into_iter()
+                .filter(|s| s.night.in_date_range(start_date, end_date))
+                .collect::<Vec<Sleep>>());
+           sleeps
+        }
 }
 
 #[Object]
@@ -138,6 +149,18 @@ impl Night {
             date
         }
     }
+
+    pub fn in_date_range(&self, start_date: &SleepsInRangeInput, end_date: &SleepsInRangeInput) -> bool {
+
+        let in_year_range = self.year >= start_date.year && self.year <= end_date.year;
+        let in_month_range = self.month >= start_date.month && self.month <= end_date.month;
+        let in_day_range = match (start_date.day, end_date.day) {
+            (Some(s), Some(e)) => self.day >= s && self.day <= e, 
+            (_, _) => true
+        };
+
+        in_year_range && in_month_range && in_day_range
+    }
 }
 
 #[derive(Debug, Clone, Default, PartialEq, InputObject)]
@@ -191,4 +214,17 @@ pub struct UpdateCommentInput {
 pub struct RemoveTagFromSleepInput {
     pub sleep_id: i64,
     pub tag_id: i64
+}
+
+#[derive(Debug, Clone, Default, PartialEq, InputObject)]
+pub struct SleepsByMonthInput {
+    pub month: u8,
+    pub year: u16
+}
+
+#[derive(Debug, Clone, Default, PartialEq, InputObject)]
+pub struct SleepsInRangeInput {
+    pub month: u8,
+    pub year: u16,
+    pub day: Option<u8>
 }

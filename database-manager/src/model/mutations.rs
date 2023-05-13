@@ -3,6 +3,10 @@ use super::gql_types::*;
 
 use async_graphql::{Context, Object};
 
+// TODO: I think errors should be handled better. Currently, when something fails at the database layer,
+// the gql api will return None/null instead of a descriptive error explaining the problem.
+// Example: Adding duplciates to unique columns
+
 pub struct MutationRoot;
 
 #[Object]

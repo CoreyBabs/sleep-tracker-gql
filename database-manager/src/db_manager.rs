@@ -121,6 +121,15 @@ impl DBManager {
         self.get_mulitple_sleeps(sleep_ids).await
     }
 
+    pub async fn get_sleeps_by_month(&self, month: u8, year: u16) -> Option<Vec<DbmSleep>> {
+        let result = DBSleep::select_by_month(&self.connection_pool, month, year).await;
+
+        match result {
+            Ok(s) => Some(s.into_iter().map(|x| DbmSleep { sleep: x, tags: None }).collect()),
+            Err(_) => None
+        }
+    }
+
     pub async fn update_sleep_amount(&self, id: i64, amount: f64) -> bool {
         DBSleep::update_amount(&self.connection_pool, id, amount).await
             .unwrap_or(false)

@@ -85,6 +85,15 @@ async fn test_sleep_selects(dbm: &mut DBManager) {
 
     let sleep_by_tag_no_tag = dbm.get_sleeps_by_tag(100).await.expect("sleep no tags test failed");
     assert_eq!(sleep_by_tag_no_tag.len(), 0);
+
+    let sleep_by_months = dbm.get_sleeps_by_month(11, 2022).await.expect("sleep by month test failed");
+    assert_eq!(sleep_by_months.len(), 3);
+
+    let sleep_by_months_none = dbm.get_sleeps_by_month(12, 2022).await.expect("sleep by month test failed");
+    assert_eq!(sleep_by_months_none.len(), 0);
+
+    let sleep_by_months_none = dbm.get_sleeps_by_month(11, 2023).await.expect("sleep by month test failed");
+    assert_eq!(sleep_by_months_none.len(), 0);    
 }
 
 async fn test_tag_selects(dbm: &mut DBManager) {

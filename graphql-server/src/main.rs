@@ -12,7 +12,6 @@ use database_manager::{QueryRoot, MutationRoot};
 
 #[tokio::main]
 async fn main() {
-   // let dbm = database_manager::init_db().await;
    let dbm = database_manager::_init_test_db().await;
 
     let schema = Schema::build(QueryRoot, MutationRoot, EmptySubscription)
