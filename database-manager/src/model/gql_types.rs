@@ -42,10 +42,9 @@ impl Sleep {
         start_date: &SleepsInRangeInput,
         end_date: &SleepsInRangeInput)
         -> Option<Vec<Sleep>> {
-            let sleeps = sleeps.map(|v| v.into_iter()
+            sleeps.map(|v| v.into_iter()
                 .filter(|s| s.night.in_date_range(start_date, end_date))
-                .collect::<Vec<Sleep>>());
-           sleeps
+                .collect::<Vec<Sleep>>())
         }
 }
 
