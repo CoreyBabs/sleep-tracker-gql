@@ -6,8 +6,8 @@ pub async fn initalize_db(pool: &SqlitePool) -> Result<sqlite::SqliteQueryResult
     let create_sleep_table = 
     "CREATE TABLE IF NOT EXISTS sleep
         (
-            id         INTEGER  NOT NULL PRIMARY KEY AUTOINCREMENT,
-            night      TEXT NOT NULL,
+            id         INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+            night      TEXT NOT NULL UNIQUE,
             amount     REAL NOT NULL,
             quality    INTEGER NOT NULL,
             created_on TEXT NOT NULL DEFAULT (datetime('now','localtime')),
@@ -18,7 +18,7 @@ pub async fn initalize_db(pool: &SqlitePool) -> Result<sqlite::SqliteQueryResult
     "CREATE TABLE IF NOT EXISTS tag
         (
             id         INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-            name       TEXT NOT NULL,
+            name       TEXT NOT NULL UNIQUE,
             color      INTEGER NOT NULL,
             created_on TEXT NOT NULL DEFAULT (datetime('now','localtime')),
             updated_on TEXT NOT NULL DEFAULT (datetime('now','localtime'))
