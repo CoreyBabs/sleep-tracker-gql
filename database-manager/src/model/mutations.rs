@@ -7,6 +7,7 @@ use async_graphql::{Context, Object};
 // the gql api will return None/null instead of a descriptive error explaining the problem.
 // Example: Adding duplciates to unique columns
 
+/// Contains the Mutation defintions for the graphql api
 pub struct MutationRoot;
 
 #[Object]

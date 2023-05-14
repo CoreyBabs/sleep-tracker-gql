@@ -2,6 +2,14 @@ use std::fs;
 use super::DBManager;
 use super::db_types;
 
+/// Creates a test database. If the given database already exists it will be deleted.
+/// Once the database is created, mock data is added, queried, updated and deleted
+/// and basic assertions are used to test the db functionality
+/// 
+/// # Arguments
+/// 
+/// * `db_path` - A string slice containing the file path to the test database
+/// 
 pub async fn test_db_queries(db_path: &str) {
     // Init to new db
     if std::path::Path::new(db_path).exists() {
@@ -22,6 +30,13 @@ pub async fn test_db_queries(db_path: &str) {
     println!("Tests complete!");
 }
 
+/// Creates a test database. If the given database already exists it will be deleted.
+/// Returns a DBManager to manage the test database.
+/// 
+/// # Arguments 
+/// 
+/// * `db_path` - A string slice containing the file path to the test database
+/// 
 pub async fn create_test_db(db_path: &str) -> DBManager {
     // Init to new db
     let exists = std::path::Path::new(db_path).exists();

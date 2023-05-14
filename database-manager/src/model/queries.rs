@@ -3,6 +3,7 @@ use super::gql_types::*;
 
 use async_graphql::{Context, Object};
 
+/// Contains the query definitions for the graphql api.
 pub struct QueryRoot;
 
 #[Object]
