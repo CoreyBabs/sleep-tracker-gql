@@ -36,7 +36,8 @@ impl DBSleep {
     }
 
     pub async fn select_by_month(pool: &SqlitePool, month: u8, year: u16) -> Result<Vec<DBSleep>, sqlx::Error>  {
-        let month = month.to_string();
+        // format month to match the expected yyyy-mm-dd format
+        let  month = format!("{:02}", month);
         let year = year.to_string();
         let mut date = [year, month].join("-");
         date.push('%');
