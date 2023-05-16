@@ -1,9 +1,15 @@
 use sqlx::{SqlitePool};
 
+/// Representation of the comment table
 #[derive(Debug, Clone, Default, PartialEq)]
 pub struct DBComment {
+    /// Primary key
     pub id: i64,
+
+    /// Fk to the sleep that is associated to the comment
     pub sleep_id: i64,
+    
+    /// Text comment
     pub comment: String,
 }
 

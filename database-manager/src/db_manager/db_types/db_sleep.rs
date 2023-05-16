@@ -1,10 +1,18 @@
 use sqlx::{SqlitePool};
 
+/// Representation of the sleep table
 #[derive(Debug, Clone, Default, PartialEq)]
 pub struct DBSleep {
+    /// Primary key
     pub id: i64,
+
+    /// date in yyyy-mm-dd format, must be unique
     pub night: String,
+
+    /// amount of sleep
     pub amount: f64,
+
+    /// quality of sleep, scale is open ended
     pub quality: i64,
 }
 

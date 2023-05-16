@@ -1,9 +1,15 @@
 use sqlx::{SqlitePool};
 
+/// Representation of the tag table
 #[derive(Debug, Clone, Default, PartialEq)]
 pub struct DBTag {
+    /// Primary key
     pub id: i64,
+
+    /// name of the tag, must be unique
     pub name: String,
+
+    /// decimal representation of the rgb color value for the tag ex: Red (0xFF0000) is 16711680
     pub color: i64,
 }
 

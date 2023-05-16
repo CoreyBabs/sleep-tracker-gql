@@ -1,9 +1,15 @@
 use sqlx::{SqlitePool};
 
+/// Representation of the sleep_tag table. Maps the many to many relationships between sleeps and tags
 #[derive(Debug, Clone, Default, PartialEq)]
 pub struct DBSleepTags {
+    /// Primary key
     pub id: i64,
+
+    /// Fk to the sleep table
     pub sleep_id: i64,
+
+    /// Fk to the tag table
     pub tag_id: i64,
 }
 
