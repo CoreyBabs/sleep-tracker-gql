@@ -2,13 +2,25 @@ use async_graphql::{Context, Object, SimpleObject, InputObject};
 use crate::db_manager::DbmSleep;
 use crate::DBManager;
 
+/// Graphql representation of a sleep
 #[derive(Debug, Clone, Default, PartialEq)]
 pub struct Sleep {
+    /// Primary key
     pub id: i64,
+
+    /// Date of the night
     pub night: Night,
+
+    /// Amount of sleep
     pub amount: f64,
+
+    /// Quality of sleep, scale is flexible
     pub quality: i64,
+
+    /// Tags assoicated to the sleep
     pub tags: Option<Vec<Tag>>,
+
+    /// Comments associated to the sleep
     pub comments: Option<Vec<Comment>>
 }
 
@@ -93,10 +105,16 @@ impl Sleep {
     }
 }
 
+/// Graphql representation of a tag
 #[derive(Debug, Clone, Default, PartialEq, SimpleObject)]
 pub struct Tag {
+    /// Primary key
     pub id: i64,
+
+    /// Name of the tag
     pub name: String,
+
+    /// Decimal representation of the rgb color value for the tag ex: Red (0xFF0000) is 16711680
     pub color: i64,
 }
 
@@ -110,10 +128,16 @@ impl Tag {
     }
 }
 
+/// Graphql representation of a comment
 #[derive(Debug, Clone, Default, PartialEq, SimpleObject)]
 pub struct Comment {
+    /// Primary key
     pub id: i64,
+
+    /// id of the sleep the comment is associated to
     pub sleep_id: i64,
+
+    /// text comment
     pub comment: String,
 }
 
@@ -127,11 +151,19 @@ impl Comment {
     }
 }
 
+/// Graphql representation of the date
 #[derive(Debug, Clone, Default, PartialEq, SimpleObject)]
 pub struct Night {
+    /// Day portion of the date
     pub day: u8,
+
+    /// Month portion of the date
     pub month: u8,
+
+    /// Year portion of the date
     pub year: u16,
+
+    /// String representation of the date in yyyy-mm-dd format
     pub date: String,
 }
 
@@ -162,68 +194,120 @@ impl Night {
     }
 }
 
+/// Graphql representation for inputting a sleep to the database
 #[derive(Debug, Clone, Default, PartialEq, InputObject)]
 pub struct SleepInput {
+    /// String representation of the date in yyyy-mm-dd format
     pub night: String,
+
+    /// Amount of sleep
     pub amount: f64,
+
+    /// Quality of sleep
     pub quality: i64,
+
+    /// Tags to associate to the sleep
     pub tags: Option<Vec<i64>>,
+
+    /// Comments to add to the sleep
     pub comments: Option<Vec<String>>
 }
 
+/// Graphql representation for inputting a tag to the database
 #[derive(Debug, Clone, Default, PartialEq, InputObject)]
 pub struct TagInput {
+    /// Name of the tag
     pub name: String,
+
+    /// Decimal representation of the rgb color value for the tag ex: Red (0xFF0000) is 16711680
     pub color: i64,
 }
 
+/// Graphql input for adding tags to a sleep
 #[derive(Debug, Clone, Default, PartialEq, InputObject)]
 pub struct AddTagsToSleepInput {
+    /// Id of the sleep to add the tags to
     pub sleep_id: i64,
+
+    /// Vector of the tag ids to add to the sleep
     pub tag_ids: Vec<i64>
 }
 
+/// Graphql input fir adding a comment to a sleep
 #[derive(Debug, Clone, Default, PartialEq, InputObject)]
 pub struct AddCommentToSleepInput {
+    /// id of the sleep to add the comment to
     pub sleep_id: i64,
+
+    /// text comment to add to the sleep
     pub comment: String
 }
 
+/// Graphql input to update a sleep value
 #[derive(Debug, Clone, Default, PartialEq, InputObject)]
 pub struct UpdateSleepInput {
+    /// id of the sleep to update
     pub sleep_id: i64,
+
+    /// Optionally update the amount of sleep
     pub amount: Option<f64>,
+
+    /// Optionally update the quality of the sleep
     pub quality: Option<i64>,
 }
 
+/// Graphql input to update a tag
 #[derive(Debug, Clone, Default, PartialEq, InputObject)]
 pub struct UpdateTagInput {
+    /// id of the tag to update
     pub tag_id: i64,
+
+    /// Optionally update the name of the tag
     pub name: Option<String>,
+
+    /// Optionally update rgb color value for the tag ex: Red (0xFF0000) is 16711680
     pub color: Option<i64>,
 }
 
+/// Graphql input to update a comment
 #[derive(Debug, Clone, Default, PartialEq, InputObject)]
 pub struct UpdateCommentInput {
+    /// id of the comment to update
     pub comment_id: i64,
+
+    /// text to update the comment to
     pub comment: String
 }
 
+/// Graphql input for removing a tag from a sleep
 #[derive(Debug, Clone, Default, PartialEq, InputObject)]
 pub struct RemoveTagFromSleepInput {
+    /// id of the sleep to remove the tag from
     pub sleep_id: i64,
+
+    /// the id of the tag to remove
     pub tag_id: i64
 }
 
+/// Graphql input to query sleeps in a given month
 #[derive(Debug, Clone, Default, PartialEq, InputObject)]
 pub struct SleepsByMonthInput {
+    /// month to query
     pub month: u8,
+
+    /// year the month is in
     pub year: u16
 }
 
+/// Graphql input to to query sleeps in a given date range
 #[derive(Debug, Clone, Default, PartialEq, InputObject)]
 pub struct SleepsInRangeInput {
+    /// month at either the start or end of the range
     pub month: u8,
+
+    /// year at either the start or end of the range
     pub year: u16,
+
+    /// Optionally include a specific day at the start or end of the range
     pub day: Option<u8>
 }
