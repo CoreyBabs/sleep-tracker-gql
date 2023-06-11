@@ -1,11 +1,6 @@
 # sleep-tracker
 
-Backend in rust for an app to track sleeping.
+Backend in rust for an app to track sleeping. Graphql api that is used by https://github.com/CoreyBabs/sleep_tracker_ui.
 
-This repo is temporary and should not be used independently. I am unsure of what framework to use for the frontend so I want to have a single source for the backend.
+Goal is to track sleep quality, dreams and look for patterns. Project for learning rust and using it to make a graphql web server.
   
-# Requirements
-  * Store/Get sleep quality, amount on a day by day basis
-  * Allow users to add custom tags to a day
-  * Allow users to filter by time or tag
-  * Generate statistics based on sleep time, quality, tags, or calendar time.
