@@ -10,7 +10,7 @@ pub use model::{QueryRoot, MutationRoot};
 
 /// Initializes and returns a database manager to manage db calls.
 pub async fn init_db() -> DBManager {
-    DBManager::init("sqlite://debug.db").await.unwrap()
+    DBManager::init("sqlite://sleep.db").await.unwrap()
 }
 
 /// Initializes and returns a test database.

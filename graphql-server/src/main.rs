@@ -14,10 +14,8 @@ use database_manager::{QueryRoot, MutationRoot};
 
 #[tokio::main]
 async fn main() {
-    // dbm is currently being created with a test db that gets deleted and recreated every startup
-    // Uncomment following line for using a real db
-    // let dbm = database_manager::init_db().await;
-    let dbm = database_manager::_init_test_db().await;
+     let dbm = database_manager::init_db().await;
+    //let dbm = database_manager::_init_test_db().await;
 
     // Build schema with queries and mutations, then set the database manager as the context
     let schema = Schema::build(QueryRoot, MutationRoot, EmptySubscription)
